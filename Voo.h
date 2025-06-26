@@ -22,8 +22,10 @@ private:
     std::string destino;
     double distancia; // em milhas
     std::string horaSaidaPrevista;
+    std::string horaChegadaPrevista;
+    double tempoDeVooEstimado; // em horas
+    int numeroDeEscalasEstimado; // número de escalas do voo.
     Aeronave* aeronaveAssociada; //* Ponteiro para um objeto Aeronave
-    // piloto é uma subclasse de Pessoa, então podemos usar um ponteiro para Pessoa
     Piloto* comandante; // * para o comandante
     Piloto* primeiroOficial; // * para o oficial 
     std::vector<Passageiro*> passageiros; // Vetor de pointers para Passageiro
@@ -55,6 +57,6 @@ public:
     void adicionarPassageiro(Pessoa* p);
     void calcularEstimativas() ;
     void exibirPassageiros() const;
-
+    std::string getHoraChegadaPrevista() const;
 };
 #endif // VOO_H

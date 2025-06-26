@@ -6,8 +6,11 @@
 #include <iostream>
 #include <vector>
 
-Voo::Voo(int c, const std::string& orig, const std::string& dest, double dist,
-         const std::string& horaSaida, Aeronave* aeronave,
+using namespace std;
+
+
+Voo::Voo(int c, const string& orig, const string& dest, double dist,
+         const string& horaSaida, Aeronave* aeronave,
          Piloto* comando, Piloto* primeiroOficial): codigo(c), origem(orig), destino(dest),
             distancia(dist), horaSaidaPrevista(horaSaida), aeronaveAssociada(aeronave), comandante(comando), 
             primeiroOficial(primeiroOficial)  {}
@@ -20,19 +23,19 @@ void Voo::setCodigo(int c) {
     codigo = c;
 }
 
-std::string Voo::getOrigem() const {
+string Voo::getOrigem() const {
     return origem;
 }
 
-void Voo::setOrigem(const std::string& orig) {
+void Voo::setOrigem(const string& orig) {
     origem = orig;
 }
 
-std::string Voo::getDestino() const {
+string Voo::getDestino() const {
     return destino;
 }
 
-void Voo::setDestino(const std::string& dest) {
+void Voo::setDestino(const string& dest) {
     destino = dest;
 }
 
@@ -44,11 +47,11 @@ void Voo::setDistancia(double dist) {
     distancia = dist;
 }
 
-std::string Voo::getHoraSaidaPrevista() const {
+string Voo::getHoraSaidaPrevista() const {
     return horaSaidaPrevista;
 }
 
-void Voo::setHoraSaidaPrevista(const std::string& horaSaida) {
+void Voo::setHoraSaidaPrevista(const string& horaSaida) {
     horaSaidaPrevista = horaSaida;
 }
 
@@ -76,7 +79,7 @@ void Voo::setPrimeiroOficial(Piloto* primeiroOficial) {
     this->primeiroOficial = primeiroOficial;
 }
 
-std::vector<Passageiro*> Voo::getPassageiros() const {
+vector<Passageiro*> Voo::getPassageiros() const {
     return passageiros;
 }
 
@@ -84,28 +87,75 @@ void Voo::adicionarPassageiro(Pessoa* p) {
     if (aeronaveAssociada != nullptr) { // Verifica se a aeronave associada existe
         if (passageiros.size() < aeronaveAssociada->getCapacidade()) { //verifica capacidade da aeronave
 
-            std::cout << "Passageiro " << p->getNome() << " adicionado ao voo " << codigo << "." << std::endl;
+            cout << "Passageiro " << p->getNome() << " adicionado ao voo " << codigo << "." << endl;
         } else {
-            std::cout << "ERRO: Capacidade maxima da aeronave." << std::endl;
+            cout << "ERRO: Capacidade maxima da aeronave." << endl;
         }
     } else {
-        std::cout << "ERRO: Nenhuma aeronave selecionada." << std::endl;
+        cout << "ERRO: Nenhuma aeronave selecionada." << endl;
     }
 }
 
 void Voo::calcularEstimativas() {
 
+    if (this->aeronaveAssociada == nullptr) {
+        // Se não houver aeronave
+        this->numeroDeEscalasEstimado = 0;
+        this->tempoDeVooEstimado = 0.0;
+        cout << "ERRO: Nenhuma aeronave associada ao voo." << endl;
+        return;
+    }
+    
+    // Verifica se a autonomia é válida para evitar divisão por zero.
+    if (this->aeronaveAssociada->getAutonomia() > 0) {
+        //calculo de escalas
+        this->numeroDeEscalasEstimado = static_cast<int>(this->distancia / this->aeronaveAssociada->getAutonomia());
+    } else {
+        this->numeroDeEscalasEstimado = 0;
+    }
+
+    //------       tempo de voo puro
+    double tempoPuroDeVoo = this->distancia / this->aeronaveAssociada->getVelocidadeMedia();
+
+    this->tempoDeVooEstimado = tempoPuroDeVoo + this->numeroDeEscalasEstimado; //cada escala = 1hora
+
+    int horasTotais = static_cast<int>(this->tempoDeVooEstimado);
+    int minutos = static_cast<int>((this->tempoDeVooEstimado - horasTotais) * 60);
+       
+    //------ Hora de chegada prevista
+    //Pegar a hora e minuto da string "HH:MM" de saída
+    size_t pos = this->horaSaidaPrevista.find(':');
+     int horasSaida = std::stoi(this->horaSaidaPrevista.substr(0, pos));
+    int minutosSaida = std::stoi(this->horaSaidaPrevista.substr(pos + 1));
+
+    //Pegar a duração do voo em horas e minutos
+    int horasDuracao = static_cast<int>(this->tempoDeVooEstimado);
+    int minutosDuracao = static_cast<int>((this->tempoDeVooEstimado - horasDuracao) * 60);
+    int minutosFinais = minutosSaida + minutosDuracao;
+    int horasFinais = horasSaida + horasDuracao;
+    //corrigindo valores
+    horasFinais = horasFinais + minutosFinais / 60; // horas adicionais que vieram dos minutos
+    minutosFinais = minutosFinais % 60; // Pega o resto dos minutos
+    horasFinais = horasFinais % 24;  // Pega o resto das horas (para voos que cruzam a meia-noite)
+
+
+    cout << "====================================" << endl;
+    cout << "Estimativas para o voo " << this->codigo << " calculadas:" << endl;
+    cout << " -> Escalas necessarias: " << this->numeroDeEscalasEstimado << endl;
+    cout << " -> Tempo total de viagem: " << horasTotais << " horas e " << minutos << " minutos." << endl;
+    cout << " -> Hora de chegada prevista: " << horasFinais << ":" << minutosFinais << endl;
+    cout << "====================================" << endl;
 }
 
 void Voo::exibirPassageiros() const {
-    std::cout << "=============================================" << std::endl;
-    std::cout << "--- Passageiros do Voo " << codigo << " ---" << std::endl;
+    cout << "=============================================" << endl;
+    cout << "--- Passageiros do Voo " << codigo << " ---" << endl;
     if (passageiros.empty()) {
-        std::cout << "Nenhum passageiro a bordo." << std::endl;
+        cout << "Nenhum passageiro a bordo." << endl;
     } else {
         for (Passageiro* p : passageiros) { 
-            std::cout << "Nome: " << p->getNome() << " , CPF: " << p->getCpf() <<", Bilhete: " << p->getnumeroDoBilhete() << std::endl;
+            cout << "Nome: " << p->getNome() << " , CPF: " << p->getCpf() <<", Bilhete: " << p->getnumeroDoBilhete() << endl;
         }
     }
-    std::cout << "=============================================" << std::endl;
+    cout << "=============================================" << endl;
 }
