@@ -47,6 +47,8 @@ public:
     void setDistancia(double dist);
     std::string getHoraSaidaPrevista() const;
     void setHoraSaidaPrevista(const std::string& horaSaida);
+    std::string getHoraChegadaPrevista() const;
+    void setHoraChegadaPrevista(const std::string& horaChegada);
     Aeronave* getAeronaveAssociada() const;
     void setAeronaveAssociada(Aeronave* aeronave);
     Piloto* getComandante() const;

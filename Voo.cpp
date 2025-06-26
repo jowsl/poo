@@ -55,6 +55,14 @@ void Voo::setHoraSaidaPrevista(const string& horaSaida) {
     horaSaidaPrevista = horaSaida;
 }
 
+string Voo::getHoraChegadaPrevista() const {
+    return horaChegadaPrevista;
+}
+
+void Voo::setHoraChegadaPrevista(const string& horaChegada) {
+    horaChegadaPrevista = horaChegada;
+}
+
 Aeronave* Voo::getAeronaveAssociada() const {
     return aeronaveAssociada;
 }
@@ -142,7 +150,7 @@ void Voo::calcularEstimativas() {
     //formatando correto para deixar em string
     string horasFormatada = "";
     if (horasFinais < 10) {
-        horasFormatada = "0" + to_string(horasFinais);
+        horasFormatada += "0" + to_string(horasFinais);
     } 
     horasFormatada += std::to_string(horasFinais);
     
