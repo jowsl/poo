@@ -125,8 +125,8 @@ void Voo::calcularEstimativas() {
     //------ Hora de chegada prevista
     //Pegar a hora e minuto da string "HH:MM" de saída
     size_t pos = this->horaSaidaPrevista.find(':');
-     int horasSaida = std::stoi(this->horaSaidaPrevista.substr(0, pos));
-    int minutosSaida = std::stoi(this->horaSaidaPrevista.substr(pos + 1));
+     int horasSaida = stoi(this->horaSaidaPrevista.substr(0, pos));
+    int minutosSaida = stoi(this->horaSaidaPrevista.substr(pos + 1));
 
     //Pegar a duração do voo em horas e minutos
     int horasDuracao = static_cast<int>(this->tempoDeVooEstimado);
@@ -138,6 +138,22 @@ void Voo::calcularEstimativas() {
     minutosFinais = minutosFinais % 60; // Pega o resto dos minutos
     horasFinais = horasFinais % 24;  // Pega o resto das horas (para voos que cruzam a meia-noite)
 
+
+    //formatando correto para deixar em string
+    string horasFormatada = "";
+    if (horasFinais < 10) {
+        horasFormatada = "0" + to_string(horasFinais);
+    } 
+    horasFormatada += std::to_string(horasFinais);
+    
+    horasFormatada += ":";
+    
+    if (minutosFinais < 10) {
+        horasFormatada += "0";
+    }
+    horasFormatada += std::to_string(minutosFinais);
+    
+    this->horaChegadaPrevista = horasFormatada; //salvando na variável correta.
 
     cout << "====================================" << endl;
     cout << "Estimativas para o voo " << this->codigo << " calculadas:" << endl;
