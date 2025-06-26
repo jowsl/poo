@@ -4,7 +4,7 @@
 using namespace std;
 
 //construtor
-Aeronave::Aeronave(int c, const std::string& m, int cap, double vm, double aut)
+Aeronave::Aeronave(int c, const string& m, int cap, double vm, double aut)
     : codigo(c), modelo(m), capacidade(cap), velocidadeMedia(vm), autonomia(aut) {}
 
 // getters e setters
@@ -16,11 +16,11 @@ void Aeronave::setCodigo(int c) {
     codigo = c;
 }
 
-std::string Aeronave::getModelo() const {
+string Aeronave::getModelo() const {
     return modelo;
 }
 
-void Aeronave::setModelo(const std::string& m) {
+void Aeronave::setModelo(const string& m) {
     modelo = m;
 }
 
