@@ -97,7 +97,6 @@ void Voo::calcularEstimativas() {
 
 }
 
-// Versão com vector<Passageiro*>, SEM dynamic_cast
 void Voo::exibirPassageiros() const {
     std::cout << "=============================================" << std::endl;
     std::cout << "--- Passageiros do Voo " << codigo << " ---" << std::endl;
