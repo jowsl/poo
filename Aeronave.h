@@ -7,7 +7,7 @@
 
 class Aeronave {
 private:
-    int codigo;
+    std::string codigo;
     std::string modelo;
     int capacidade;
     double velocidadeMedia; // em milhas por hora
@@ -15,10 +15,10 @@ private:
 
 public:
     // Declaração do construtor
-    Aeronave(int c, const std::string& m, int cap, double vm, double aut);
+    Aeronave(const std::string& c, const std::string& m, int cap, double vm, double aut);
 
     // Declarações dos métodos "get" e "set"
-    int getCodigo() const;
+    std::string getCodigo() const;
     void setCodigo(int c);
 
     std::string getModelo() const;
@@ -32,6 +32,8 @@ public:
 
     double getAutonomia() const;
     void setAutonomia(double aut);
+
+    void exibirDados() const;
 };
 
 #endif
