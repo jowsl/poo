@@ -9,17 +9,20 @@
 using namespace std;
 
 
-Voo::Voo(int c, const string& orig, const string& dest, double dist,
-         const string& horaSaida, Aeronave* aeronave,
-         Piloto* comando, Piloto* primeiroOficial): codigo(c), origem(orig), destino(dest),
-            distancia(dist), horaSaidaPrevista(horaSaida), aeronaveAssociada(aeronave), comandante(comando), 
-            primeiroOficial(primeiroOficial)  {}
+Voo::Voo(const string& c, const string& orig, const string& dest, double dist,
+         const string& horaSaida, Aeronave* aeronave, Piloto* comando, 
+         Piloto* primeiroOficial):
+            codigo(c), origem(orig), destino(dest), distancia(dist),
+            horaSaidaPrevista(horaSaida), aeronaveAssociada(aeronave), 
+            comandante(comando), primeiroOficial(primeiroOficial)  {
+                this->calcularEstimativas(); // horaChegadaPrevista é atualizada    
+            }
 
-int Voo::getCodigo() const {
+string Voo::getCodigo() const {
     return codigo;
 }
 
-void Voo::setCodigo(int c) {
+void Voo::setCodigo(const string& c) {
     codigo = c;
 }
 
@@ -91,10 +94,10 @@ vector<Passageiro*> Voo::getPassageiros() const {
     return passageiros;
 }
 
-void Voo::adicionarPassageiro(Pessoa* p) {
-    if (aeronaveAssociada != nullptr) { // Verifica se a aeronave associada existe
+void Voo::adicionarPassageiro(Passageiro* p) {
+    if (this->aeronaveAssociada != nullptr) { // Verifica se a aeronave associada existe
         if (passageiros.size() < aeronaveAssociada->getCapacidade()) { //verifica capacidade da aeronave
-
+            passageiros.push_back(p);
             cout << "Passageiro " << p->getNome() << " adicionado ao voo " << codigo << "." << endl;
         } else {
             cout << "ERRO: Capacidade maxima da aeronave." << endl;
@@ -182,4 +185,46 @@ void Voo::exibirPassageiros() const {
         }
     }
     cout << "=============================================" << endl;
+}
+
+void Voo::exibirDados() const {
+ cout << "\n==========================================" << endl;
+    cout << "  DETALHES DO VOO: " << this->codigo << endl;
+    cout << "==========================================" << endl;
+    cout << "Origem: " << this->origem << "\tDestino: " << this->destino << endl;
+    cout << "Distância: " << this->distancia << " milhas" << endl;
+    cout << "Saída Prevista: " << this->horaSaidaPrevista << "\tChegada Prevista: " << this->horaChegadaPrevista << endl;
+    cout << "Tempo Estimado: " << this->tempoDeVooEstimado << " horas\tEscalas: " << this->numeroDeEscalasEstimado << endl;
+
+    // Detalhes da Aeronave 
+    if (this->aeronaveAssociada != nullptr) {
+        cout << "\n--- Aeronave ---\n";
+        this->aeronaveAssociada->exibirDados(); // Delegando a tarefa para a classe Aeronave
+    } else {
+        cout << "\n--- Aeronave: Nenhuma aeronave associada. ---\n";
+    }
+
+    // --- Detalhes da Tripulação ---
+    if (this->comandante != nullptr) {
+        cout << "\n--- Comandante ---\n";
+        this->comandante->exibirDados(); // Delegando para a classe Piloto
+    }
+    if (this->primeiroOficial != nullptr) {
+        cout << "\n--- Primeiro Oficial ---\n";
+        this->primeiroOficial->exibirDados(); // Delegando para a classe Piloto
+    }
+
+    // Lista de Passageiros 
+    cout << "\n--- Passageiros a Bordo (" << this->passageiros.size() << ") ---\n";
+    if (this->passageiros.empty()) {
+        cout << "Nenhum passageiro embarcado." << endl;
+    } else {
+        for (const Passageiro* p : this->passageiros) {
+            if (p != nullptr) {
+                p->exibirDados(); // Delegando para a classe Passageiro
+                cout << "---" << endl;
+            }
+        }
+    }
+    cout << "==========================================" << endl;
 }
