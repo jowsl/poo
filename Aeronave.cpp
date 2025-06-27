@@ -4,11 +4,11 @@
 using namespace std;
 
 //construtor
-Aeronave::Aeronave(int c, const string& m, int cap, double vm, double aut)
+Aeronave::Aeronave(const string& c, const string& m, int cap, double vm, double aut)
     : codigo(c), modelo(m), capacidade(cap), velocidadeMedia(vm), autonomia(aut) {}
 
 // getters e setters
-int Aeronave::getCodigo() const {
+string Aeronave::getCodigo() const {
     return codigo;
 }
 
@@ -46,4 +46,12 @@ double Aeronave::getAutonomia() const {
 
 void Aeronave::setAutonomia(double aut) {
     autonomia = aut;
+}
+
+void Aeronave::exibirDados() const {
+    cout << "Código da Aeronave: " << this->codigo << endl;
+    cout << "Modelo: " << this->modelo << endl;
+    cout << "Capacidade: " << this->capacidade << " passageiros" << endl;
+    cout << "Velocidade Média: " << this->velocidadeMedia << " milhas/h" << endl;
+    cout << "Autonomia: " << this->autonomia << " milhas" << endl;
 }
