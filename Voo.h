@@ -1,10 +1,3 @@
-// Atributos (privados):
-// codigo (int), origem (string), destino (string), distancia (double).
-// horaSaidaPrevista (string ou um tipo de dado de tempo).
-// aeronaveAssociada (um ponteiro para um objeto Aeronave: Aeronave*).
-// comandante e primeiroOficial (ponteiros para objetos Piloto: Piloto*).
-// passageiros (aqui você usará a STL! Um std::vector<Passageiro*> é perfeito para isso).
-
 #ifndef VOO_H
 #define VOO_H
 
@@ -17,7 +10,7 @@
 
 class Voo {
 private:
-    int codigo;
+    std::string codigo;
     std::string origem;
     std::string destino;
     double distancia; // em milhas
@@ -32,33 +25,40 @@ private:
 
 public:
     // Construtor
-    Voo(int c, const std::string& orig, const std::string& dest, double dist,
+    Voo(const std::string& c, const std::string& orig, const std::string& dest, double dist,
         const std::string& horaSaida, Aeronave* aeronave,
         Piloto* comando, Piloto* primeiroOficial);
 
     // getters e setters
-    int getCodigo() const;
-    void setCodigo(int c);
+    std::string getCodigo() const;
     std::string getOrigem() const;
-    void setOrigem(const std::string& orig);
     std::string getDestino() const;
-    void setDestino(const std::string& dest);
     double getDistancia() const;
-    void setDistancia(double dist);
     std::string getHoraSaidaPrevista() const;
-    void setHoraSaidaPrevista(const std::string& horaSaida);
     std::string getHoraChegadaPrevista() const;
-    void setHoraChegadaPrevista(const std::string& horaChegada);
     Aeronave* getAeronaveAssociada() const;
-    void setAeronaveAssociada(Aeronave* aeronave);
     Piloto* getComandante() const;
-    void setComandante(Piloto* comando);
     Piloto* getPrimeiroOficial() const;
+    void setCodigo(const std::string& c);
+    void setOrigem(const std::string& orig);
+    void setDestino(const std::string& dest);
+    void setDistancia(double dist);
+    void setHoraSaidaPrevista(const std::string& horaSaida);
+    void setHoraChegadaPrevista(const std::string& horaChegada);
+    void setAeronaveAssociada(Aeronave* aeronave);
+    void setComandante(Piloto* comando);
     void setPrimeiroOficial(Piloto* primeiroOficial);
     std::vector<Passageiro*> getPassageiros() const;
-    void adicionarPassageiro(Pessoa* p);
-    void calcularEstimativas() ;
+    
+    // metodos
+    void adicionarPassageiro(Passageiro* p);
+    void calcularEstimativas();
+    void exibirDados() const;
     void exibirPassageiros() const;
-    std::string getHoraChegadaPrevista() const;
+    void removerPassageiro(Passageiro *p); //Fazer
+    void serializar(); //Fazer
+
+        
 };
-#endif // VOO_H
+
+#endif
