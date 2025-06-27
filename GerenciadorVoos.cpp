@@ -101,6 +101,7 @@ void GerenciadorVoos::criarVoo() {
     for (size_t i = 0; i < this->aeronaves.size(); ++i) {
         cout << "[" << i << "] " << aeronaves[i]->getModelo()
              << " (Código: " << aeronaves[i]->getCodigo() << ")" << endl;
+        cout << endl;
     }
     int indiceAeronave;
     cout << "Escolha a aeronave pelo número: ";
@@ -119,12 +120,13 @@ void GerenciadorVoos::criarVoo() {
         cout << "[" << i << "] " << pilotos[i]->getNome()
              << " (Matrícula: " << pilotos[i]->getMatricula() << ")" << endl;
     }
+    cout << endl;
     int indiceComandante;
     cout << "Escolha o COMANDANTE pelo número: ";
     cin >> indiceComandante;
 
     if (indiceComandante < 0 || indiceComandante >= pilotos.size()) {
-        cout << "ERRO: Índice de piloto inválido." << endl;
+        cout << endl << "ERRO: Índice de piloto inválido." << endl;
         return;
     }
     Piloto* comandanteEscolhido = this->pilotos[indiceComandante];
@@ -135,11 +137,11 @@ void GerenciadorVoos::criarVoo() {
     cin >> indiceCoPiloto;
     // Validacao das escolhas dos Pilotos
     if (indiceCoPiloto < 0 || indiceCoPiloto >= pilotos.size()) {
-        cout << "ERRO: Índice de piloto inválido." << endl;
+        cout << endl << "ERRO: Índice de piloto inválido." << endl;
         return;
     }
     if (indiceCoPiloto == indiceComandante) {
-        cout << "ERRO: O primeiro oficial não pode ser o mesmo que o comandante." << endl;
+        cout << endl << "ERRO: O primeiro oficial não pode ser o mesmo que o comandante." << endl;
         return;
     }
     Piloto* coPilotoEscolhido = this->pilotos[indiceCoPiloto];
@@ -155,7 +157,7 @@ void GerenciadorVoos::criarVoo() {
 void GerenciadorVoos::embarcarPassageiroVoo() {
      cout << "\n--- Embarcar Passageiro em Voo ---" << endl;
     if (voos.empty() || passageiros.empty()) {
-        cout << "ERRO: É necessário ter pelo menos um voo e um passageiro cadastrados." << endl;
+        cout << endl << "ERRO: É necessário ter pelo menos um voo e um passageiro cadastrados." << endl;
         return;
     }
 
@@ -172,16 +174,17 @@ void GerenciadorVoos::embarcarPassageiroVoo() {
 
     // Validação da escolha do voo
     if (indiceVoo < 0 || indiceVoo >= voos.size()) {
-        cout << "ERRO: Índice de voo inválido." << endl;
+        cout << endl << "ERRO: Índice de voo inválido." << endl;
         return;
     }
 
     // Listar e escolher o Passageiro 
     for (size_t i = 0; i < this->passageiros.size(); ++i) {
+        cout <<endl;
+        cout << "\nPassageiros disponíveis:" << endl;
         cout << "[" << i << "] " << passageiros[i]->getNome()
              << " (CPF: " << passageiros[i]->getCpf() << ")" << endl;
     }
-
     int indicePassageiro;
     cout << "\nEscolha o passageiro pelo número: ";
     cin >> indicePassageiro;
@@ -196,8 +199,7 @@ void GerenciadorVoos::embarcarPassageiroVoo() {
     Voo* vooEscolhido = this->voos[indiceVoo];
     Passageiro* passageiroEscolhido = this->passageiros[indicePassageiro];
 
-    // Chama o método da classe Voo para adicionar o passageiro.
-    // A própria função 'adicionarPassageiro' (que você já fez)
+    // Chama o método da classe Voo para adicionar o passageiro.    
     // vai verificar a capacidade e imprimir a mensagem de sucesso ou erro.
     vooEscolhido->adicionarPassageiro(passageiroEscolhido);
 
@@ -210,6 +212,13 @@ void GerenciadorVoos::listarPassageirosDeVoo() const {
         cout << "Nenhum voo cadastrado para listar passageiros." << endl;
         return;
     }
+    
+    for (Voo* vooAtual : voos)
+    {
+        cout<< "Voo " << vooAtual->getCodigo() << endl;
+    }
+    
+    cout << endl;
 
     string codigo;
     cout << "Digite o código do voo que deseja listar os passageiros: ";
