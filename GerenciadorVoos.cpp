@@ -2,6 +2,10 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <limits>
+#include <fstream>
+
+using namespace std;
 
 // Construtor vazio
 GerenciadorVoos::GerenciadorVoos() {}
@@ -86,15 +90,15 @@ void GerenciadorVoos::criarVoo() {
     double distancia;
 
     cout << "Digite o código do voo: ";
-    cin >> codigo;
+    getline(cin, codigo);
     cout << "Digite a cidade de origem: ";
-    cin >> origem;
+    getline(cin, origem);
     cout << "Digite a cidade de destino: ";
-    cin >> destino;
+    getline(cin, destino);
     cout << "Digite a distância do voo (em milhas): ";
-    cin >> distancia;
+    cin >> distancia; cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     cout << "Digite a hora de saída prevista (HH:MM): ";
-    cin >> horaSaida;
+    getline(cin, horaSaida);
 
     // Escolher a Aeronave 
     cout << "\nAeronaves disponíveis:" << endl;
@@ -124,7 +128,7 @@ void GerenciadorVoos::criarVoo() {
     cin >> indiceComandante;
 
     if (indiceComandante < 0 || indiceComandante >= pilotos.size()) {
-        cout << "ERRO: Índice de piloto inválido." << endl;
+        cout << "\nERRO: Índice de piloto inválido." << endl;
         return;
     }
     Piloto* comandanteEscolhido = this->pilotos[indiceComandante];
@@ -135,11 +139,11 @@ void GerenciadorVoos::criarVoo() {
     cin >> indiceCoPiloto;
     // Validacao das escolhas dos Pilotos
     if (indiceCoPiloto < 0 || indiceCoPiloto >= pilotos.size()) {
-        cout << "ERRO: Índice de piloto inválido." << endl;
+        cout << "\nERRO: Índice de piloto inválido." << endl;
         return;
     }
     if (indiceCoPiloto == indiceComandante) {
-        cout << "ERRO: O primeiro oficial não pode ser o mesmo que o comandante." << endl;
+        cout << "\nERRO: O primeiro oficial não pode ser o mesmo que o comandante." << endl;
         return;
     }
     Piloto* coPilotoEscolhido = this->pilotos[indiceCoPiloto];
@@ -155,7 +159,7 @@ void GerenciadorVoos::criarVoo() {
 void GerenciadorVoos::embarcarPassageiroVoo() {
      cout << "\n--- Embarcar Passageiro em Voo ---" << endl;
     if (voos.empty() || passageiros.empty()) {
-        cout << "ERRO: É necessário ter pelo menos um voo e um passageiro cadastrados." << endl;
+        cout << "\nERRO: É necessário ter pelo menos um voo e um passageiro cadastrados." << endl;
         return;
     }
 
@@ -172,7 +176,7 @@ void GerenciadorVoos::embarcarPassageiroVoo() {
 
     // Validação da escolha do voo
     if (indiceVoo < 0 || indiceVoo >= voos.size()) {
-        cout << "ERRO: Índice de voo inválido." << endl;
+        cout << "\nERRO: Índice de voo inválido." << endl;
         return;
     }
 
@@ -255,6 +259,75 @@ void GerenciadorVoos::listarPassageirosDeVoo() const {
     
         for (const Voo* voo : this->voos) {
             voo->exibirDados();
-            cout << "--------------------" << endl;
         }
     }
+
+// função que vai salvar os .CSV de aeronaves, pessoas e voos
+// A função percorre os vetores de aeronaves, pilotos, passageiros e voos,
+// e escreve os dados em arquivos CSV separados. Cada tipo de dado tem seu próprio arquivo como pedido no pdf.
+void GerenciadorVoos::salvarDados() {
+    //AERONAVE
+    ofstream arquivoAeronaves("aeronaves.csv");
+    if (arquivoAeronaves.is_open()) {
+        for (const Aeronave* aeronave : this->aeronaves) {
+            arquivoAeronaves << aeronave->getCodigo() << ","
+                             << aeronave->getModelo() << ","
+                             << aeronave->getCapacidade() << ","
+                             << aeronave->getVelocidadeMedia() << ","
+                             << aeronave->getAutonomia() << endl;
+        }
+        arquivoAeronaves.close();
+        cout << "Dados de aeronaves salvos em aeronaves.csv" << endl;
+    }
+
+    //PESSOAS - que no caso são passageiros e pilotos
+    ofstream arquivoPessoas("pessoas.csv");
+    if (arquivoPessoas.is_open()) {
+        for (const Piloto* piloto : this->pilotos) {
+            arquivoPessoas << "PILOTO,"
+                           << piloto->getNome() << ","
+                           << piloto->getMatricula() << ","
+                           << piloto->getBreve() << ","
+                           << piloto->getHorasDeVoo() << endl;
+        }
+        for (const Passageiro* passageiro : this->passageiros) {
+            arquivoPessoas << "PASSAGEIRO,"
+                           << passageiro->getNome() << ","
+                           << passageiro->getCpf() << ","
+                           << passageiro->getnumeroDoBilhete() << endl;
+        }
+        arquivoPessoas.close();
+        cout << "Dados de pessoas salvos em pessoas.csv" << endl;
+    }
+
+    // VOOS
+    ofstream arquivoVoos("voos.csv");
+    if (arquivoVoos.is_open()) {
+        for (const Voo* voo : this->voos) {
+            arquivoVoos << voo->getCodigo() << ","
+                        << voo->getOrigem() << ","
+                        << voo->getDestino() << ","
+                        << voo->getDistancia() << ","
+                        << voo->getHoraSaidaPrevista() << ","
+                        << voo->getAeronaveAssociada()->getCodigo() << ","
+                        << voo->getComandante()->getMatricula() << ","
+                        << voo->getPrimeiroOficial()->getMatricula();
+
+            //CPFs dos passageiros, separados por ';'
+            for (const Passageiro* passageiro : voo->getPassageiros()) {
+                arquivoVoos << ";" << passageiro->getCpf();
+            }
+            arquivoVoos << endl;
+        }
+        arquivoVoos.close();
+        cout << "Dados de voos salvos em voos.csv" << endl;
+    }
+}
+
+
+// função para carregar os .CSV de aeronaves, pessoas e voos
+
+void GerenciadorVoos::carregarDados() {
+    std::string linha, campo;
+    // Carregar aeronaves 
+}

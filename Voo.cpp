@@ -11,8 +11,8 @@ using namespace std;
 
 Voo::Voo(const string& c, const string& orig, const string& dest, double dist,
          const string& horaSaida, Aeronave* aeronave, Piloto* comando, 
-         Piloto* primeiroOficial):
-            codigo(c), origem(orig), destino(dest), distancia(dist),
+         Piloto* primeiroOficial)
+         : codigo(c), origem(orig), destino(dest), distancia(dist),
             horaSaidaPrevista(horaSaida), aeronaveAssociada(aeronave), 
             comandante(comando), primeiroOficial(primeiroOficial)  {
                 this->calcularEstimativas(); // horaChegadaPrevista é atualizada    
@@ -136,7 +136,7 @@ void Voo::calcularEstimativas() {
     //------ Hora de chegada prevista
     //Pegar a hora e minuto da string "HH:MM" de saída
     size_t pos = this->horaSaidaPrevista.find(':');
-     int horasSaida = stoi(this->horaSaidaPrevista.substr(0, pos));
+    int horasSaida = stoi(this->horaSaidaPrevista.substr(0, pos));
     int minutosSaida = stoi(this->horaSaidaPrevista.substr(pos + 1));
 
     //Pegar a duração do voo em horas e minutos

@@ -1,5 +1,6 @@
 #include <iostream>
 #include "GerenciadorVoos.h"
+#include <limits>
 
 using namespace std;
 
@@ -12,8 +13,8 @@ void printaMenu() {
     cout << "5. Embarcar passageiro em voo" << endl;
     cout << "6. Listar voos" << endl;
     cout << "7. Listar passageiros de um voo" << endl;
-    cout << "8. Gerar relatórios e estatísticas" << endl;
-    cout << "9. Salvar dados e sair" << endl;
+    cout << "8. Salvar ou Carregar dados" << endl;
+    cout << "9. Sair" << endl;
     cout << "==========================================" << endl;
     cout << "Escolha uma opção: ";
 }
@@ -21,11 +22,12 @@ void printaMenu() {
 int main() {
     GerenciadorVoos sistema;
     int opcao = 0;
+    int salvarCarregar = 0;
 
     do {
         printaMenu();
         cin >> opcao;
-
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         // Validação de entrada para caso o usuário digitar um texto
         if (cin.fail()) {
             cout << "\nERRO: Entrada inválida. Por favor, digite apenas números." << endl;
@@ -58,9 +60,23 @@ int main() {
                 break;
             case 8:
                 cout << "\nFuncionalidade implementada pelo Chupa Rato." << endl;
+                cin >> salvarCarregar;
+                switch (salvarCarregar)
+                {
+                    case 1:
+                        sistema.salvarDados();
+                        cout << "Dados salvos com sucesso!" << endl;
+                        break;
+                    // case 2:
+                    //     sistema.carregarDados();
+                    //     cout << "Dados carregados com sucesso!" << endl;
+                    //     break;
+                    default:
+                        cout << "Opção inválida. Tente novamente." << endl;
+                }
                 break;
             case 9:
-                cout << "\nSaindo do sistema. Obrigado! (nao salva ainda)" << endl;
+                cout << "\nSaindo do sistema. Obrigado!" << endl;
                 break;
             default:
                 if (opcao != 0) {
