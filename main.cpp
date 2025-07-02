@@ -59,7 +59,7 @@ int main() {
                 sistema.listarPassageirosDeVoo();
                 break;
             case 8:
-                cout << "\nFuncionalidade implementada pelo Chupa Rato." << endl;
+                cout << "\n[1] Para salvar os dados. \n[2] Para carregar os dados. \nEscolha uma opção: ";
                 cin >> salvarCarregar;
                 switch (salvarCarregar)
                 {
