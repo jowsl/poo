@@ -15,7 +15,7 @@ void printaMenu() {
     cout << "7. Listar passageiros de um voo" << endl;
     cout << "8. Salvar ou Carregar dados" << endl;
     cout << "9. Sair" << endl;
-    cout << "==========================================" << endl;
+    cout << "===========================================" << endl;
     cout << "Escolha uma opção: ";
 }
 
@@ -27,7 +27,7 @@ int main() {
     do {
         printaMenu();
         cin >> opcao;
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
         // Validação de entrada para caso o usuário digitar um texto
         if (cin.fail()) {
             cout << "\nERRO: Entrada inválida. Por favor, digite apenas números." << endl;
@@ -59,18 +59,21 @@ int main() {
                 sistema.listarPassageirosDeVoo();
                 break;
             case 8:
-                cout << "\n[1] Para salvar os dados. \n[2] Para carregar os dados. \nEscolha uma opção: ";
+                cout << "\n1. Para salvar os dados. \n2. Para carregar os dados." << endl;
+                cout << "===========================================" << endl;
+                cout << "Escolha uma opção: ";
                 cin >> salvarCarregar;
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 switch (salvarCarregar)
                 {
                     case 1:
                         sistema.salvarDados();
                         cout << "Dados salvos com sucesso!" << endl;
                         break;
-                    // case 2:
-                    //     sistema.carregarDados();
-                    //     cout << "Dados carregados com sucesso!" << endl;
-                    //     break;
+                    case 2:
+                        sistema.carregarDados();
+                        cout << "Dados carregados com sucesso!" << endl;
+                        break;
                     default:
                         cout << "Opção inválida. Tente novamente." << endl;
                 }

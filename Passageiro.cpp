@@ -22,7 +22,7 @@ Passageiro::Passageiro(const string& nome, const string& cpf, const string& nBil
 
 void Passageiro::exibirDados() const {
     Pessoa::exibirDados(); // Chama a versão da classe base para exibir o nome
-    cout << "CPF: " << this->cpf << endl;
+    cout << "  CPF: " << this->cpf << endl;
     cout << "Número do Bilhete: " << this->numeroDoBilhete << endl;
 }
 

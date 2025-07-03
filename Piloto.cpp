@@ -29,7 +29,7 @@ int Piloto::getHorasDeVoo() const {
 
 void Piloto::exibirDados() const {
     Pessoa::exibirDados();
-    cout << "Matricula: " << this->matricula << endl;
+    cout << "  Matricula: " << this->matricula << endl;
     cout << "Breve: " << this->breve << endl;
     cout << "Horas de voo: " << this->horasDeVoo << endl;
 }

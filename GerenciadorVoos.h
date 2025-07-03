@@ -30,6 +30,9 @@ public:
     void listarPassageirosDeVoo() const;
     void salvarDados();
     void carregarDados();
+    Aeronave* encontrarAeronave(const string&);
+    Piloto* encontrarPiloto(const string&);
+    Passageiro* encontrarPassageiro(const string&);
 };
 
 #endif 

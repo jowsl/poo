@@ -151,18 +151,20 @@ void Voo::calcularEstimativas() {
 
 
     //formatando correto para deixar em string
-    string horasFormatada = "";
+    string horasFormatada;
     if (horasFinais < 10) {
-        horasFormatada += "0" + to_string(horasFinais);
-    } 
-    horasFormatada += std::to_string(horasFinais);
-    
-    horasFormatada += ":";
-    
-    if (minutosFinais < 10) {
-        horasFormatada += "0";
+        horasFormatada = "0" + std::to_string(horasFinais);
+    } else {
+        horasFormatada = std::to_string(horasFinais);
     }
-    horasFormatada += std::to_string(minutosFinais);
+    
+    string minutosFormatado;
+    if (minutosFinais < 10) {
+        minutosFormatado = "0" + std::to_string(minutosFinais);
+    } else {
+    minutosFormatado = std::to_string(minutosFinais);
+    }
+    this->horaChegadaPrevista = horasFormatada + ":" + minutosFormatado;
     
     this->horaChegadaPrevista = horasFormatada; //salvando na variável correta.
 

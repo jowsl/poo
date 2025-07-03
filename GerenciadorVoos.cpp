@@ -4,6 +4,7 @@
 #include <vector>
 #include <limits>
 #include <fstream>
+#include <sstream>
 
 using namespace std;
 
@@ -47,11 +48,11 @@ void GerenciadorVoos::cadastrarPiloto() {
 
     cout << "\n--- Cadastro de Piloto ---" << endl;
     cout << "Digite a matrícula: ";
-    cin >> matricula;
+    getline(cin, matricula);
     cout << "Digite as horas de voo: ";
     cin >> horasDeVoo;
     cout << "Digite o nome completo: ";
-    cin.ignore(1000, '\n');
+    cin.ignore(1000, '\n'); // Limpa o buffer antes de ler a linha
     getline(cin, nome);
     cout << "Digite o brevê do piloto: ";
     getline(cin, breve);
@@ -96,7 +97,7 @@ void GerenciadorVoos::criarVoo() {
     cout << "Digite a cidade de destino: ";
     getline(cin, destino);
     cout << "Digite a distância do voo (em milhas): ";
-    cin >> distancia; cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    cin >> distancia; cin.ignore(numeric_limits<streamsize>::max(), '\n');
     cout << "Digite a hora de saída prevista (HH:MM): ";
     getline(cin, horaSaida);
 
@@ -325,9 +326,125 @@ void GerenciadorVoos::salvarDados() {
 }
 
 
-// função para carregar os .CSV de aeronaves, pessoas e voos
+// funções auxiliares para encontrar objetos específicos
+// Essas funções percorrem os vetores de aeronaves, pilotos e passageiros em busca do dado especificado.
+Aeronave* GerenciadorVoos::encontrarAeronave(const string& codigo) {
+    for (Aeronave* aeronave : this->aeronaves) {
+        if (aeronave->getCodigo() == codigo) {
+            return aeronave;
+        }
+    }
+    return nullptr; // caso n encontre, null
+}
 
+Piloto* GerenciadorVoos::encontrarPiloto(const string& matricula) {
+    for (Piloto* piloto : this->pilotos) {
+        if (piloto->getMatricula() == matricula) {
+            return piloto;
+        }
+    }
+    return nullptr; // caso n encontre, null
+}
+
+Passageiro* GerenciadorVoos::encontrarPassageiro(const string& cpf) {
+    for (Passageiro* passageiro : this->passageiros) {
+        if (passageiro->getCpf() == cpf) {
+            return passageiro;
+        }
+    }
+    return nullptr;
+}
+
+// função para carregar os .CSV de aeronaves, pessoas e voos e 'reconstruir' os objetos
 void GerenciadorVoos::carregarDados() {
-    std::string linha, campo;
-    // Carregar aeronaves 
+    string linha, campo;
+    
+    // Carregar aeronaves
+    ifstream arquivoAeronaves("aeronaves.csv");
+    while (getline(arquivoAeronaves, linha)) {
+            stringstream ss(linha);
+            string codigo, modelo;
+            int capacidade;
+            double velocidade, autonomia;
+
+            getline(ss, codigo, ',');
+            getline(ss, modelo, ',');
+            ss >> capacidade; ss.ignore(); // Lê o número e ignora a vírgula
+            ss >> velocidade; ss.ignore();
+            ss >> autonomia;
+
+            this->aeronaves.push_back(new Aeronave(codigo, modelo, capacidade, velocidade, autonomia));
+        }
+        arquivoAeronaves.close();
+    
+    ifstream arquivoPessoas("pessoas.csv");
+    if (arquivoPessoas.is_open()) {
+        while (std::getline(arquivoPessoas, linha)) {
+            std::stringstream ss(linha);
+            std::vector<std::string> campos;
+            while(std::getline(ss, campo, ',')) {
+                campos.push_back(campo);
+            } 
+
+            if (campos[0] == "PILOTO") {
+                // ordem aqui é PILOTO, nome, matricula, breve, horas
+                this->pilotos.push_back(new Piloto(campos[1], campos[2], campos[3], std::stoi(campos[4])));
+            } else if (campos[0] == "PASSAGEIRO") {
+                // ordem dos dados PASSAGEIRO, nome, cpf, bilhete 
+                this->passageiros.push_back(new Passageiro(campos[1], campos[2], campos[3]));
+            }
+        }
+        arquivoPessoas.close();
+    }
+
+    // Agora os voos
+    ifstream arquivoVoos("voos.csv");
+    if (arquivoVoos.is_open()) {
+        while (getline(arquivoVoos, linha)) {
+            stringstream ss(linha);
+            string codigoVoo, origem, destino, horaSaida;
+            double distancia;
+            string codAeronave, matComandante, matOficial_e_CPFs, listaCPFs;
+
+            getline(ss, codigoVoo, ',');
+            getline(ss, origem, ',');
+            getline(ss, destino, ',');
+            ss >> distancia; ss.ignore();
+            getline(ss, horaSaida, ',');
+            getline(ss, codAeronave, ',');
+            getline(ss, matComandante, ',');
+            // O resto da linha são os CPFs separados por ';', então lemos o resto tipo isso : mat123;cpf1;cpf2
+            getline(ss, matOficial_e_CPFs); 
+
+            // Agora, encontramos os ponteiros usando as funções auxiliares
+            Aeronave* ptrAeronave = encontrarAeronave(codAeronave);
+            Piloto* ptrComandante = encontrarPiloto(matComandante);
+            
+            // Separar a matrícula do oficial da lista de CPFs
+            // apenas um detalhe para não precisar refazer o salvarDados.
+            size_t pos_primeiro_ponto_virgula = matOficial_e_CPFs.find(';');
+            Piloto* ptrOficial = nullptr;
+            if(pos_primeiro_ponto_virgula != string::npos){
+                ptrOficial = encontrarPiloto(matOficial_e_CPFs.substr(0, pos_primeiro_ponto_virgula));
+                listaCPFs = matOficial_e_CPFs.substr(pos_primeiro_ponto_virgula + 1);   
+            } else { // Caso não haja passageiros
+                ptrOficial = encontrarPiloto(matOficial_e_CPFs);
+            }
+            
+            Voo* novoVoo = new Voo(codigoVoo, origem, destino, distancia, horaSaida, ptrAeronave, ptrComandante, ptrOficial);
+
+            // Agora, processamos a lista de passageiros
+            stringstream ssCPFs(listaCPFs);
+            string cpf;
+            while (getline(ssCPFs, cpf, ';')) {
+                Passageiro* ptrPassageiro = encontrarPassageiro(cpf);
+                if (ptrPassageiro) {
+                    novoVoo->adicionarPassageiro(ptrPassageiro);
+                }
+            }
+                this->voos.push_back(novoVoo);
+            
+        }
+    }
+    arquivoVoos.close();
 }
