@@ -5,6 +5,8 @@
 #include <limits>
 #include <fstream>
 #include <sstream>
+#include <map>
+#include <algorithm>
 
 using namespace std;
 
@@ -251,17 +253,17 @@ void GerenciadorVoos::listarPassageirosDeVoo() const {
     }
 }
     
-    void GerenciadorVoos::listarVoos() const {
-        cout << "\n--- Lista de Voos Cadastrados ---" << endl;
-        if (voos.empty()) {
-            cout << "Nenhum voo cadastrado." << endl;
-            return;
-        }
-    
-        for (const Voo* voo : this->voos) {
-            voo->exibirDados();
-        }
+void GerenciadorVoos::listarVoos() const {
+    cout << "\n--- Lista de Voos Cadastrados ---" << endl;
+    if (voos.empty()) {
+        cout << "Nenhum voo cadastrado." << endl;
+        return;
     }
+
+    for (const Voo* voo : this->voos) {
+        voo->exibirDados();
+    }
+}
 
 // função que vai salvar os .CSV de aeronaves, pessoas e voos
 // A função percorre os vetores de aeronaves, pilotos, passageiros e voos,
@@ -447,4 +449,171 @@ void GerenciadorVoos::carregarDados() {
         }
     }
     arquivoVoos.close();
+}
+
+// Funções para exibir relatórios e estatísticas do sistema [EXTRA]
+string GerenciadorVoos::gerarRelatorioTotalVoos() {
+    stringstream ss;
+    ss << "\n--- Relatório: Total de Voos ---" << endl;
+    ss << "Número total de voos cadastrados: " << this->voos.size() << endl;
+    
+    return ss.str();
+}
+
+
+string GerenciadorVoos::gerarRelatorioMediaPassageiros() {
+
+    stringstream ss;
+
+    ss << "\n--- Relatório: Média de Passageiros por Voo ---" << endl;
+    if (this->voos.empty()) {
+        ss << "Nenhum voo cadastrado para calcular a média." << endl;
+        return ss.str();
+    }
+
+    int totalPassageiros = 0;
+    for (const Voo* voo : this->voos) {
+        totalPassageiros += voo->getPassageiros().size();
+    }
+
+    double media = static_cast<double>(totalPassageiros) / this->voos.size();
+    ss << "Média de passageiros por voo: " << media << endl;
+
+    return ss.str();
+}
+
+string GerenciadorVoos::gerarRelatorioVoosLotados() {
+    stringstream ss;
+
+    ss << "\n--- Relatório: Voos com 90% ou mais da capacidade ---" << endl;
+    bool encontrou = false;
+    for (const Voo* voo : this->voos) {
+        double capacidade = voo->getAeronaveAssociada()->getCapacidade();
+        double passageiros = voo->getPassageiros().size();
+        if (capacidade > 0 && (passageiros / capacidade) >= 0.9) {
+            ss << "Voo " << voo->getCodigo() << ": " << passageiros << "/" << capacidade << " passageiros." << endl;
+            encontrou = true;
+        }
+    }
+    if (!encontrou) {
+        ss << "Nenhum voo atingiu 90% da capacidade." << endl;
+    }
+    return ss.str();
+}
+
+
+string GerenciadorVoos::gerarRelatorioAeronavesUtilizadas() {
+
+    stringstream ss;
+
+    ss << "\n--- Relatório: Aeronaves Mais Utilizadas ---" << endl;
+    if (this->voos.empty()) {
+        ss << "Nenhum voo cadastrado." << endl;
+        return ss.str();
+    }
+
+    map<Aeronave*, int> contagem;
+    for (const Voo* voo : this->voos) {
+        contagem[voo->getAeronaveAssociada()]++;
+    }
+
+    // Para ordenar, copiamos o mapa para um vetor e ordenamos o vetor
+    vector<pair<Aeronave*, int>> sortedContagem(contagem.begin(), contagem.end());
+    sort(sortedContagem.begin(), sortedContagem.end(), [](const auto& a, const auto& b) {
+        return a.second > b.second; // Ordena do maior para o menor
+    });
+
+    for (const auto& par : sortedContagem) {
+        ss << "Aeronave " << par.first->getCodigo() << " (" << par.first->getModelo() << "): "
+             << par.second << " voos." << endl;
+    }
+    return ss.str();
+}
+
+
+string GerenciadorVoos::gerarRelatorioPassageirosFrequentes() {
+
+    stringstream ss;
+
+    ss << "\n--- Relatório: Passageiros com Mais de um Voo ---" << endl;
+
+    map<const Passageiro*, int> contagem;
+    // Percorre todos os voos
+    for (const Voo* voo : this->voos) {
+        // E para cada voo, percorre todos os passageiros dele
+        for (const Passageiro* passageiro : voo->getPassageiros()) {
+            contagem[passageiro]++;
+        }
+    }
+
+    bool encontrou = false;
+    for (const auto& par : contagem) {
+        if (par.second > 1) { // Se o contador for maior que 1
+            ss << "Passageiro: " << par.first->getNome() << " (CPF: " << par.first->getCpf() << ") "
+                 << "- participou de " << par.second << " voos." << endl;
+            encontrou = true;
+        }
+    }
+
+    if (!encontrou) {
+        ss << "Nenhum passageiro participou de mais de um voo." << endl;
+    }
+
+    return ss.str();
+
+}
+
+string GerenciadorVoos::gerarRelatorioDistanciaPorAeronave() {
+
+    stringstream ss;
+
+    ss << "\n--- Relatório: Distância Percorrida por Aeronave ---" << endl;
+    if (this->voos.empty()) {
+        ss << "Nenhum voo cadastrado para calcular distâncias." << endl;
+        return ss.str();
+    }
+
+    map<Aeronave*, double> distancias;
+    for (const Voo* voo : this->voos) {
+        distancias[voo->getAeronaveAssociada()] += voo->getDistancia();
+    }
+
+    for (const auto& par : distancias) {
+        ss << "Aeronave " << par.first->getCodigo() << " (" << par.first->getModelo() << "): "
+             << par.second << " milhas voadas." << endl;
+    }
+
+    return ss.str();
+}
+
+
+// função para salvar em txt [EXTRA]
+void GerenciadorVoos::gerarTodosRelatorios() {
+    stringstream relatorioMestre; // stringstream para juntar todos os relatórios
+
+    // faz a chamada das funções auxiliares
+    relatorioMestre << gerarRelatorioTotalVoos() << "\n\n";
+    relatorioMestre << gerarRelatorioMediaPassageiros() << "\n\n";
+    relatorioMestre << gerarRelatorioAeronavesUtilizadas() << "\n\n";
+    relatorioMestre << gerarRelatorioPassageirosFrequentes() << "\n\n";
+    relatorioMestre << gerarRelatorioVoosLotados() << "\n\n";
+    relatorioMestre << gerarRelatorioDistanciaPorAeronave();
+
+    // converter o resultado final pra string.
+    string relatorioFinal = relatorioMestre.str();
+
+    // printa no terminal
+    cout << "\n================= RELATÓRIO GERAL DO SISTEMA =================\n" << endl;
+    cout << relatorioFinal;
+    cout << "\n=================================================================\n" << endl;
+
+    // salva a string relatorio final em um txt como pedido
+    ofstream arquivo("Relatorios.txt");
+    if (arquivo.is_open()) {
+        arquivo << relatorioFinal;
+        arquivo.close();
+        cout << "Relatorios salvos com sucesso em 'Relatorios.txt'" << endl;
+    } else {
+        cout << "ERRO: Nao foi possivel salvar o relatorio em arquivo." << endl;
+    }
 }

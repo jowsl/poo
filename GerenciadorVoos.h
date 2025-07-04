@@ -15,7 +15,6 @@ private:
     vector<Piloto*> pilotos;
     vector<Passageiro*> passageiros;
     vector<Voo*> voos;
-
 public:
     GerenciadorVoos();
     ~GerenciadorVoos(); // Destrutor
@@ -33,6 +32,17 @@ public:
     Aeronave* encontrarAeronave(const string&);
     Piloto* encontrarPiloto(const string&);
     Passageiro* encontrarPassageiro(const string&);
+    
+    // extras
+    void gerarTodosRelatorios();
+    string gerarRelatorioTotalVoos();
+    string gerarRelatorioMediaPassageiros();
+    string gerarRelatorioAeronavesUtilizadas();
+    string gerarRelatorioPassageirosFrequentes();
+    string gerarRelatorioVoosLotados();
+    string gerarRelatorioDistanciaPorAeronave();
+    
+    
 };
 
 #endif 

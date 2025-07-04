@@ -14,10 +14,12 @@ void printaMenu() {
     cout << "6. Listar voos" << endl;
     cout << "7. Listar passageiros de um voo" << endl;
     cout << "8. Salvar ou Carregar dados" << endl;
-    cout << "9. Sair" << endl;
+    cout << "9. Relatórios e Estatísticas do Sistema" << endl; //extra
+    cout << "0. Sair" << endl;
     cout << "===========================================" << endl;
     cout << "Escolha uma opção: ";
 }
+
 
 int main() {
     GerenciadorVoos sistema;
@@ -79,6 +81,9 @@ int main() {
                 }
                 break;
             case 9:
+                sistema.gerarTodosRelatorios();
+                break;
+            case 0:
                 cout << "\nSaindo do sistema. Obrigado!" << endl;
                 break;
             default:
@@ -88,7 +93,7 @@ int main() {
                 break;
         }
 
-    } while (opcao != 9);
+    } while (opcao != 0);
 
     return 0;
 }

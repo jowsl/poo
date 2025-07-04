@@ -125,7 +125,7 @@ void Voo::calcularEstimativas() {
         this->numeroDeEscalasEstimado = 0;
     }
 
-    //------       tempo de voo puro
+    // tempo de voo puro
     double tempoPuroDeVoo = this->distancia / this->aeronaveAssociada->getVelocidadeMedia();
 
     this->tempoDeVooEstimado = tempoPuroDeVoo + this->numeroDeEscalasEstimado; //cada escala = 1hora
@@ -133,7 +133,7 @@ void Voo::calcularEstimativas() {
     int horasTotais = static_cast<int>(this->tempoDeVooEstimado);
     int minutos = static_cast<int>((this->tempoDeVooEstimado - horasTotais) * 60);
        
-    //------ Hora de chegada prevista
+    //Hora de chegada prevista
     //Pegar a hora e minuto da string "HH:MM" de saída
     size_t pos = this->horaSaidaPrevista.find(':');
     int horasSaida = stoi(this->horaSaidaPrevista.substr(0, pos));
@@ -163,16 +163,15 @@ void Voo::calcularEstimativas() {
         minutosFormatado = "0" + std::to_string(minutosFinais);
     } else {
     minutosFormatado = std::to_string(minutosFinais);
+    cout << "debug " << horasFormatada << ":" << minutosFormatado << endl;
     }
     this->horaChegadaPrevista = horasFormatada + ":" + minutosFormatado;
     
-    this->horaChegadaPrevista = horasFormatada; //salvando na variável correta.
-
     cout << "====================================" << endl;
     cout << "Estimativas para o voo " << this->codigo << " calculadas:" << endl;
     cout << " -> Escalas necessarias: " << this->numeroDeEscalasEstimado << endl;
     cout << " -> Tempo total de viagem: " << horasTotais << " horas e " << minutos << " minutos." << endl;
-    cout << " -> Hora de chegada prevista: " << horasFinais << ":" << minutosFinais << endl;
+    cout << " -> Hora de chegada prevista: " << horasFinais << ":" << minutosFormatado << endl;
     cout << "====================================" << endl;
 }
 

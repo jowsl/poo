@@ -1,0 +1,33 @@
+
+--- Relatório: Total de Voos ---
+Número total de voos cadastrados: 4
+
+
+
+--- Relatório: Média de Passageiros por Voo ---
+Média de passageiros por voo: 2.75
+
+
+
+--- Relatório: Aeronaves Mais Utilizadas ---
+Aeronave NaveP01 (Mineirim Airlines RTX5090): 2 voos.
+Aeronave Nave02 (Airbus A320neo): 1 voos.
+Aeronave Nave05 (Boing 737-800): 1 voos.
+
+
+
+--- Relatório: Passageiros com Mais de um Voo ---
+Passageiro: Silvio Santos (CPF: 03203203201) - participou de 3 voos.
+Passageiro: Shaq O'neal (CPF: 00143245601) - participou de 2 voos.
+
+
+
+--- Relatório: Voos com 90% ou mais da capacidade ---
+Voo VooP02: 6/6 passageiros.
+
+
+
+--- Relatório: Distância Percorrida por Aeronave ---
+Aeronave Nave02 (Airbus A320neo): 2200 milhas voadas.
+Aeronave Nave05 (Boing 737-800): 1150 milhas voadas.
+Aeronave NaveP01 (Mineirim Airlines RTX5090): 153 milhas voadas.
