@@ -26,5 +26,5 @@ Cara valor entrado leva para uma case do if, que por si chamará uma função es
 # Gravação 
 
 
-- Salvar / Carregar x
-- Extra - Estatísticas x
+- Salvar / Carregar 
+- Extra - Salvar Estatísticas 
