@@ -19,10 +19,6 @@ E para executar o jogo, use:
 Nosso projeto foi dividido usando menus e sub-menus que vão executar as funcionalidades do jogo.
 Cara valor entrado leva para uma case do if, que por si chamará uma função específica.
 
-<p align="center">
-    <img src="image.png" alt="alt text" width="300"/>
-</p>
-
 # Gravação 
 
 
